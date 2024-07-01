@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ROOT_DIR: ./cleararchtools
+      ROOT_DIR: ./cleanarchtools
 
     steps:
       - name: Checkout code
