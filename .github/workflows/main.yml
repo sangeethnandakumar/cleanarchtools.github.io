@@ -32,3 +32,10 @@ jobs:
 
     - name: List
       run: ls ${{ env.REACT_APP_DIR }}/dist
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.PAT_TOKEN }}
+        publish_dir: ${{ env.REACT_APP_DIR }}/dist
+        force_orphan: true
