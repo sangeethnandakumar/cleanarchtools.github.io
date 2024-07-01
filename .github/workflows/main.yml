@@ -17,6 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: List files before build
+        run: ls -R $ROOT_DIR  # List files in the root directory before build
+        working-directory: $ROOT_DIR
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
@@ -24,15 +28,22 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ${{ env.ROOT_DIR }}
+        working-directory: $ROOT_DIR
 
       - name: Build the React app
         run: npm run build
-        working-directory: ${{ env.ROOT_DIR }}
+        working-directory: $ROOT_DIR
+
+      - name: List files after build
+        run: ls -R $ROOT_DIR  # List files in the root directory after build
+        working-directory: $ROOT_DIR
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.PAT_TOKEN }}
-          publish_dir: ${{ env.ROOT_DIR }}/dist
-          verbose: true 
+          publish_dir: $ROOT_DIR/dist  # Update this path if necessary
+          verbose: true
+
+      - name: List files after deployment
+        run: ls -R /home/runner/actions_github_pages_*  # List files in the deployment directory
