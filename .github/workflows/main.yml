@@ -35,3 +35,4 @@ jobs:
         with:
           github_token: ${{ secrets.PAT_TOKEN }}
           publish_dir: ${{ env.ROOT_DIR }}/build
+          verbose: true 
