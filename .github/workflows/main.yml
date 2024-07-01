@@ -20,7 +20,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'  # Adjust this to your project's Node.js version if needed
+        node-version: '21'
 
     - name: Install dependencies
       run: npm install
@@ -30,14 +30,5 @@ jobs:
       run: npm run build
       working-directory: ${{ env.REACT_APP_DIR }}
 
-    - name: Deploy to GitHub Pages
-      run: |
-        git config --global user.name ${{ github.actor }}
-        git config --global user.email ${{ github.actor }}@users.noreply.github.com
-        git checkout --orphan gh-pages
-        git rm -rf .
-        mv ${{ env.REACT_APP_DIR }}/build/* .
-        rm -rf ${{ env.REACT_APP_DIR }}
-        git add .
-        git commit -m "Deploy to GitHub Pages"
-        git push -f origin gh-pages
+    - name: List
+      run: ls ${{ env.REACT_APP_DIR }}
