@@ -31,4 +31,4 @@ jobs:
       working-directory: ${{ env.REACT_APP_DIR }}
 
     - name: List
-      run: ls ${{ env.REACT_APP_DIR }}
+      run: ls ${{ env.REACT_APP_DIR }}/dist
