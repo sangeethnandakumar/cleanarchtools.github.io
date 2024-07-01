@@ -34,5 +34,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.PAT_TOKEN }}
-          publish_dir: ${{ env.ROOT_DIR }}/build
+          publish_dir: ${{ env.ROOT_DIR }}/dist
           verbose: true 
