@@ -1,49 +1,17 @@
-name: Deploy React App to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
-
-    env:
-      ROOT_DIR: ./cleanarchtools
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-      - name: List files before build
-        run: ls -R $ROOT_DIR  # List files in the root directory before build
-        working-directory: $ROOT_DIR
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: $ROOT_DIR
-
-      - name: Build the React app
-        run: npm run build
-        working-directory: $ROOT_DIR
-
-      - name: List files after build
-        run: ls -R $ROOT_DIR  # List files in the root directory after build
-        working-directory: $ROOT_DIR
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.PAT_TOKEN }}
-          publish_dir: $ROOT_DIR/dist  # Update this path if necessary
-          verbose: true
-
-      - name: List files after deployment
-        run: ls -R /home/runner/actions_github_pages_*  # List files in the deployment directory
+    - name: Build and Deploy React app to GitHub Pages
+      uses: omkartapale/react-deployment-gh-pages@v1.0.0
