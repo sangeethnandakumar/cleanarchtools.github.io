@@ -23,14 +23,12 @@ jobs:
         node-version: '14'  # Adjust this to your project's Node.js version if needed
 
     - name: Install dependencies
-      run: |
-        cd ${{ env.REACT_APP_DIR }}
-        npm ci
+      run: npm install
+      working-directory: ${{ env.REACT_APP_DIR }}
 
-    - name: Build
-      run: |
-        cd ${{ env.REACT_APP_DIR }}
-        npm run build
+    - name: Build the React app
+      run: npm run build
+      working-directory: ${{ env.REACT_APP_DIR }}
 
     - name: Deploy to GitHub Pages
       run: |
