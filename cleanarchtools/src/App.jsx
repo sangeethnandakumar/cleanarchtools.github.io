@@ -1,35 +1,52 @@
+﻿import { Box, Text, FormControl, AbsoluteCenter, FormLabel, Input } from '@chakra-ui/react'
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Editor from '@monaco-editor/react';
+import PresentationLayer from './PresentationLayer';
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const [design, setDesign] = useState({
+        namespace: "ExpenceTracker.Presentation",
+        entity: "catageory",
+        json: `{
+            "id": "b50808cb-0d3b-4159-b313-617e95ac5d8d",
+	        "title": "Turf Cafe",
+	        "text": "My favorite barista and coffees",
+	        "sub": "[CATAGEORY ID]",
+	        "image":"[IMAGE ID]",
+	        "icon":"[ICON ID]"
+        }`
+    });
+
+    return (
+        <>
+            <Box position='relative' padding='10'>
+                <FormControl isRequired>
+                    <FormLabel>Namespace</FormLabel>
+                    <Input placeholder='Example: ExpenceTracker.Presentation' value={design.namespace} />
+                </FormControl>
+                <FormControl isRequired>
+                    <FormLabel>Entity Name</FormLabel>
+                    <Input
+                        placeholder='Example: Catageory'
+                        value={design.entity}
+                        onChange={(e) => setDesign({ ...design, entity: e.target.value })} />
+                </FormControl>
+            </Box>
+
+            <Box w='100%' p={4} color='blue'>
+                <Editor
+                    theme="vs-dark"
+                    height="200px"
+                    defaultLanguage="csharp"
+                    defaultValue={design.json}
+                    onChange={(e) => setDesign({ ...design, json: e.target.value })}/>
+            </Box>
+
+            <PresentationLayer design={design} />
+
+        </>
+    )
 }
 
 export default App
