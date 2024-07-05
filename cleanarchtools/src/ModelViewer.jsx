@@ -15,12 +15,12 @@ function ModelViewer({ name, json, isRecord }) {
             let model = ModelMaker.makeClass(name, json);
             setEditorContent(model);
         }
-    }, [name, json]);
+    }, [name, json, isRecord]);
 
     return (
         <Editor
             theme="vs-dark"
-            height="220px"
+            height="150px"
             defaultLanguage="csharp"
             value={editorContent}
             options={{ readOnly: true }}

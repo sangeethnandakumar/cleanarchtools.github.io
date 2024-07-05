@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Editor from '@monaco-editor/react';
 import PresentationLayer from './PresentationLayer';
+import ApplicationLayer from './ApplicationLayer';
 
 function App() {
 
@@ -40,9 +41,10 @@ function App() {
                     height="200px"
                     defaultLanguage="csharp"
                     defaultValue={design.json}
-                    onChange={(e) => setDesign({ ...design, json: e.target.value })}/>
+                    onChange={(value, event) => setDesign({ ...design, json: value })}/>
             </Box>
 
+            <ApplicationLayer design={design} />
             <PresentationLayer design={design} />
 
         </>

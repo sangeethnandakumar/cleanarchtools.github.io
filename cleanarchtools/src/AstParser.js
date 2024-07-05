@@ -45,11 +45,15 @@ const AstParser = (function () {
 
     return {
         parse: function (jsonString) {
-            const parsedObject = JSON.parse(jsonString);
-            if (typeof parsedObject === 'object' && parsedObject !== null) {
-                return parseObject(parsedObject);
-            } else {
-                throw new Error('Invalid JSON format');
+            try {
+                const parsedObject = JSON.parse(jsonString);
+                if (typeof parsedObject === 'object' && parsedObject !== null) {
+                    return parseObject(parsedObject);
+                } else {
+                    throw new Error('Invalid JSON format');
+                }
+            } catch (e) {
+                return [];
             }
         }
     };

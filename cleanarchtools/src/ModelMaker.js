@@ -22,7 +22,7 @@ ${props}}
 
             let props = ``;
             ast.forEach((node) => {
-                props += `      ${node.kind} ${node.name},\n`;
+                props += `      ${node.kind} ${changeCase.pascalCase(node.name) },\n`;
             });
 
             const content = `public sealed record ${name}(

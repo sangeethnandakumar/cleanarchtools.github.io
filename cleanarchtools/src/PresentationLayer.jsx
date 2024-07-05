@@ -4,11 +4,19 @@ import Editor from '@monaco-editor/react';
 import pluralize from 'pluralize';
 import * as changeCase from 'change-case';
 import ModelViewer from "./ModelViewer";
+import AstParser from "./AstParser";
 
 function PresentationLayer({ design }) {
     const [editorContent, setEditorContent] = useState('');
 
     useEffect(() => {
+
+        let ast = AstParser.parse(design.json);
+        let maps = ``;
+        ast.forEach((node) => {
+            maps += `                           request.${node.name},\n`;
+        });
+
         const content = `public sealed class ${changeCase.pascalCase(pluralize(design.entity))}Module : CarterModule
         {
             public ${changeCase.pascalCase(pluralize(design.entity))}Module() : base("${changeCase.kebabCase(pluralize(design.entity))}")
@@ -21,19 +29,23 @@ function PresentationLayer({ design }) {
                 //GET
                 app.MapGet("/", async ([FromQuery] string id, IMediator mediator) =>
                 {
-                    var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize(design.entity))}Query(id));
-                    return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
+                    if(id is not null)
+                    {
+                        var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query(id));
+                        return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
+                    }
+                    else
+                    {
+                        var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize(design.entity))}Query());
+                        return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
+                    }
                 });
         
                 //POST
                 app.MapPost("/", async (Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request request, IMediator mediator) =>
                 {
                     var result = await mediator.Send(new Create${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
-                        request.Amount,
-                        request.Note,
-                        request.CatageoryId,
-                        request.Kind,
-                        request.AccountId
+${maps}
                     ));
                     return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
                 });
@@ -60,8 +72,11 @@ function PresentationLayer({ design }) {
                 <ModelViewer
                     name={`Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request`}
                     json={design.json}
-                    isRecord={true }/>
+                    isRecord={true} />
+
             </Box>
+
+            
 
             <Box w='100%' p={4} color='black'>
                 <Text fontSize='2xl'>{`${changeCase.pascalCase(pluralize(design.entity))}Module.cs | Carter Module`}</Text>
