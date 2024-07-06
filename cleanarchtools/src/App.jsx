@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Editor from '@monaco-editor/react';
 import PresentationLayer from './PresentationLayer';
 import ApplicationLayer from './ApplicationLayer';
+import { Highlight, Heading } from '@chakra-ui/react'
 
 import { Divider, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 
@@ -58,9 +59,14 @@ function App() {
                     <TabPanel>
                         <Box position='relative' padding='10'>
                             <Divider />
-                            <AbsoluteCenter bg='white' px='4'>
-                                <Text fontSize='3xl'>🎭 Presentation Layer</Text>
-                            </AbsoluteCenter>
+                            <Heading lineHeight='tall'>
+                                <Highlight
+                                    query={['Carter Modules', 'Minimal API']}
+                                    styles={{ px: '2', py: '1', rounded: 'full', bg: 'yellow.100' }}
+                                >
+                                    🎭 Presentation Layer Using Carter Modules & Minimal API
+                                </Highlight>
+                            </Heading>
                         </Box>
                         <PresentationLayer design={design} />
                     </TabPanel>
@@ -68,9 +74,14 @@ function App() {
                     <TabPanel>
                         <Box position='relative' padding='10'>
                             <Divider />
-                            <AbsoluteCenter bg='white' px='4'>
-                                <Text fontSize='3xl'>🎯Application Layer</Text>
-                            </AbsoluteCenter>
+                            <Heading lineHeight='tall'>
+                                <Highlight
+                                    query={['MediatR CQRS', 'Fluent Validator', 'Result Pattern']}
+                                    styles={{ px: '2', py: '1', rounded: 'full', bg: 'red.100' }}
+                                >
+                                    🎯 Application Layer Using MediatR CQRS, Fluent Validator With Result Pattern
+                                </Highlight>
+                            </Heading>
                         </Box>
                         <ApplicationLayer design={design} />
                     </TabPanel>

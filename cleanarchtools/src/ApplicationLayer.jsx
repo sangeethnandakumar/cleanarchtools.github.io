@@ -11,8 +11,7 @@ import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 
 function ApplicationLayer({ design }) {
-
-    const [editorContent, setEditorContent] = useState('');
+    
     const [queryHandlerId, setQueryHandlerId] = useState('');
     const [queryHandlerAll, setQueryHandlerAll] = useState('');
     const [commandCreateHandler, setCommandCreateHandler] = useState('');
@@ -57,7 +56,7 @@ function ApplicationLayer({ design }) {
 
         public async Task<Result<IEnumerable<${changeCase.pascalCase(design.entity)}>>> Handle(Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query request, CancellationToken cancellationToken)
         {
-            var ${pluralize(design.entity)} = await dbContext.${changeCase.pascalCase(pluralize(design.entity))};
+            var ${pluralize(design.entity)} = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.ToListAsync();
             return ${pluralize(design.entity)};
         }
     }`;
