@@ -1,6 +1,9 @@
 ﻿import { useEffect, useState } from "react";
 import { ModelMaker } from "./ModelMaker";
 import Editor from '@monaco-editor/react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 
 function ModelViewer({ name, json, isRecord }) {
 
@@ -18,13 +21,9 @@ function ModelViewer({ name, json, isRecord }) {
     }, [name, json, isRecord]);
 
     return (
-        <Editor
-            theme="vs-dark"
-            height="150px"
-            defaultLanguage="csharp"
-            value={editorContent}
-            options={{ readOnly: true }}
-        />
+        <SyntaxHighlighter language="csharp" style={solarizedlight}>
+            {editorContent}
+        </SyntaxHighlighter>
     );
 }
 

@@ -5,6 +5,9 @@ import pluralize from 'pluralize';
 import * as changeCase from 'change-case';
 import ModelViewer from "./ModelViewer";
 import AstParser from "./AstParser";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 function PresentationLayer({ design }) {
     const [editorContent, setEditorContent] = useState('');
@@ -14,7 +17,7 @@ function PresentationLayer({ design }) {
         let ast = AstParser.parse(design.json);
         let maps = ``;
         ast.forEach((node) => {
-            maps += `                           request.${node.name},\n`;
+            maps += `                           request.${changeCase.pascalCase(node.name)},\n`;
         });
 
         const content = `public sealed class ${changeCase.pascalCase(pluralize(design.entity))}Module : CarterModule
@@ -57,38 +60,38 @@ ${maps}
 
     return (
         <>
-           
 
-            <Box position='relative' padding='10'>
-                <Divider />
-                <AbsoluteCenter bg='white' px='4'>
-                    <Text fontSize='3xl'>🎭Presentation Layer</Text>
-                </AbsoluteCenter>
-            </Box>
+            <Tabs>
+                <TabList>
+                    <Tab>Carter Module + Minimal API</Tab>
+                    <Tab>Request Models</Tab>
+                </TabList>
 
-            <Box w='100%' p={4} color='black'>
-                <Text fontSize='2xl'>{`Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request.cs`}</Text>
+                <TabPanels>
+                    <TabPanel>
+                        <Box w='100%' p={4} color='black'>
+                            <Text fontSize='2xl'>{`${changeCase.pascalCase(pluralize(design.entity))}Module.cs`}</Text>
+                            <h4 />
+                            <SyntaxHighlighter language="csharp" style={solarizedlight}>
+                                {editorContent}
+                            </SyntaxHighlighter>
+                        </Box>
+                    </TabPanel>
 
-                <ModelViewer
-                    name={`Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request`}
-                    json={design.json}
-                    isRecord={true} />
+                    <TabPanel>
+                        <Box w='100%' p={4} color='black'>
+                            <Text fontSize='2xl'>{`Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request.cs`}</Text>
 
-            </Box>
+                            <ModelViewer
+                                name={`Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request`}
+                                json={design.json}
+                                isRecord={true} />
 
-            
+                        </Box>
+                    </TabPanel>
+                </TabPanels>
+            </Tabs>
 
-            <Box w='100%' p={4} color='black'>
-                <Text fontSize='2xl'>{`${changeCase.pascalCase(pluralize(design.entity))}Module.cs | Carter Module`}</Text>
-                <h4/>
-                <Editor
-                    theme="vs-light"
-                    height="500px"
-                    defaultLanguage="csharp"
-                    value={editorContent}
-                    options={{ readOnly: true }}
-                />
-            </Box>
         </>
     );
 }
