@@ -3,7 +3,7 @@ import * as changeCase from 'change-case';
 
 export const ModelMaker = (function () {
     return {
-        makeClass: function (name, json, excludeId, isCqrs) {
+        makeClass: function (name, json, excludeId, isCqrs, hasStringGuids) {
             let ast = AstParser.parse(json);
 
             if (excludeId) {
@@ -13,6 +13,9 @@ export const ModelMaker = (function () {
             let props = ``;
             ast.forEach((node, index) => {
                 if (node.kind === 'DateTime') {
+                    node.kind = 'string';
+                }
+                if (hasStringGuids && node.kind === 'Guid') {
                     node.kind = 'string';
                 }
                 props += `      public ${node.kind} ${changeCase.pascalCase(node.name)} { get; set; }`;
@@ -31,7 +34,7 @@ export const ModelMaker = (function () {
 ${props}${cqrs}`;
             return content;
         },
-        makeRecord: function (name, json, excludeId, isCqrs) {
+        makeRecord: function (name, json, excludeId, isCqrs, hasStringGuids) {
             let ast = AstParser.parse(json);
 
             if (excludeId) {
@@ -41,6 +44,9 @@ ${props}${cqrs}`;
             let props = ``;
             ast.forEach((node, index) => {
                 if (node.kind === 'DateTime') {
+                    node.kind = 'string';
+                }
+                if (hasStringGuids && node.kind === 'Guid') {
                     node.kind = 'string';
                 }
                 props += `      ${node.kind} ${changeCase.pascalCase(node.name)}`;

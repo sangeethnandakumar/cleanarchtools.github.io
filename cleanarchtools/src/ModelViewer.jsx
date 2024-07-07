@@ -7,18 +7,18 @@ import { Button, Stack } from '@chakra-ui/react'
 import { useToast } from '@chakra-ui/react'
 
 
-function ModelViewer({ name, json, isRecord, excludeId, isCqrs }) {
+function ModelViewer({ name, json, isRecord, excludeId, isCqrs, hasStringGuids }) {
 
     const [editorContent, setEditorContent] = useState('');
     const toast = useToast();
 
     useEffect(() => {
         if (isRecord) {
-            let model = ModelMaker.makeRecord(name, json, excludeId, isCqrs);
+            let model = ModelMaker.makeRecord(name, json, excludeId, isCqrs, hasStringGuids);
             setEditorContent(model);
         }
         else {
-            let model = ModelMaker.makeClass(name, json, excludeId, isCqrs);
+            let model = ModelMaker.makeClass(name, json, excludeId, isCqrs, hasStringGuids);
             setEditorContent(model);
         }
     }, [name, json, isRecord]);

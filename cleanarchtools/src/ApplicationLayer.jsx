@@ -31,6 +31,9 @@ function ApplicationLayer({ design }) {
                 if (node.kind == 'DateTime') {
                     return `              DateTime.ParseExact(request.${changeCase.pascalCase(node.name)}, "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None)`;
                 }
+                if (node.kind == 'Guid') {
+                    return `              Guid.Parse(request.${changeCase.pascalCase(node.name)})`;
+                }
                 return `              request.${changeCase.pascalCase(node.name)}`;
     })
             .join(',\n');
@@ -162,17 +165,17 @@ ${maps}
         let rules = ast.filter(f => f.name != 'id').map(node => {
             switch (node.kind) {
                 case 'string':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                .NotEmpty().WithMessage("Is required.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.");`;
                 case 'bool':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                .Equal(true).WithMessage("Is required.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .Equal(true).WithMessage("Is required.");`;
                 case 'int':
                 case 'float':
                 case 'decimal':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                .NotEmpty().WithMessage("Is required.")\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
                 case 'DateTime':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(date => DateTime.TryParseExact(date.ToString(), "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(date => DateTime.TryParseExact(date.ToString(), "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
                 case 'Guid':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(id => Guid.TryParse(id, out _)).WithMessage("Must be a valid GUID.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(id => Guid.TryParse(id, out _)).WithMessage("Must be a valid GUID.");`;
             }
         }).join('\n');
 
@@ -319,6 +322,7 @@ ${members}
                                 isRecord={true}
                                 excludeId={true}
                                 isCqrs={true}
+                                hasStringGuids={true}
                             />
                         </Box>
                     </TabPanel>
