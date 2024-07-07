@@ -342,7 +342,8 @@ ${updateRules}
         ).join('\n');
         members += ";"
 
-        const mapProfile = `//${changeCase.pascalCase(pluralize.singular(design.entity))} → ${changeCase.pascalCase(pluralize.singular(design.entity))}Dto
+        const mapProfile = `//${changeCase.pascalCase(pluralize.singular(design.entity))}
+CreateMap<Update${changeCase.pascalCase(pluralize.singular(design.entity))}Command, ${changeCase.pascalCase(pluralize.singular(design.entity))}>();
 CreateMap<${changeCase.pascalCase(pluralize.singular(design.entity))}, ${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>()
 ${members}
 `;
