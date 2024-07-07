@@ -16,44 +16,44 @@ function PresentationLayer({ design }) {
 
         let ast = AstParser.parse(design.json);
         let maps = ``;
-        ast.forEach((node) => {
-            maps += `                           request.${changeCase.pascalCase(node.name)},\n`;
-        });
+        maps = ast.filter(x => x.name != 'id').map((node) => {
+            return `                    request.${changeCase.pascalCase(node.name)}`;
+        }).join(',\n');
 
         const content = `public sealed class ${changeCase.pascalCase(pluralize(design.entity))}Module : CarterModule
+{
+    public ${changeCase.pascalCase(pluralize(design.entity))}Module() : base("${changeCase.kebabCase(pluralize(design.entity))}")
+    {
+        WithTags("${changeCase.pascalCase(pluralize(design.entity))}");
+    }
+
+    public override void AddRoutes(IEndpointRouteBuilder app)
+    {
+        //GET
+        app.MapGet("/", async ([FromQuery] string id, IMediator mediator) =>
         {
-            public ${changeCase.pascalCase(pluralize(design.entity))}Module() : base("${changeCase.kebabCase(pluralize(design.entity))}")
+            if(id is not null)
             {
-                WithTags("${changeCase.pascalCase(pluralize(design.entity))}");
+                var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query(id));
+                return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
             }
-        
-            public override void AddRoutes(IEndpointRouteBuilder app)
+            else
             {
-                //GET
-                app.MapGet("/", async ([FromQuery] string id, IMediator mediator) =>
-                {
-                    if(id is not null)
-                    {
-                        var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query(id));
-                        return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
-                    }
-                    else
-                    {
-                        var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize(design.entity))}Query());
-                        return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
-                    }
-                });
-        
-                //POST
-                app.MapPost("/", async (Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request request, IMediator mediator) =>
-                {
-                    var result = await mediator.Send(new Create${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
+                var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize(design.entity))}Query());
+                return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
+            }
+        });
+
+        //POST
+        app.MapPost("/", async (Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request request, IMediator mediator) =>
+        {
+            var result = await mediator.Send(new Create${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
 ${maps}
-                    ));
-                    return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
-                });
-            }
-        }`;
+            ));
+            return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
+        });
+    }
+}`;
 
         setEditorContent(content);
     }, [design.entity, design.json]);
@@ -85,7 +85,9 @@ ${maps}
                             <ModelViewer
                                 name={`Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request`}
                                 json={design.json}
-                                isRecord={true} />
+                                isRecord={true}
+                                excludeId={true}
+                            />
 
                         </Box>
                     </TabPanel>

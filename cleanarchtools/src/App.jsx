@@ -7,13 +7,13 @@ import DomainLayer from './DomainLayer';
 import { Highlight, Heading } from '@chakra-ui/react'
 
 import { Divider, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import PersistanceLayer from './PersistanceLayer';
 
 
 function App() {
 
     const [design, setDesign] = useState({
-        namespace: "ExpenceTracker.Presentation",
-        entity: "catageory",
+        entity: "Employee",
         json: `{
     "id": "b50808cb-0d3b-4159-b313-617e95ac5d8d",
 	"name": "Sangeeth",
@@ -25,14 +25,13 @@ function App() {
 
     return (
         <>
-            
-
             <Tabs>
                 <TabList>
                     <Tab>⚒️ Design</Tab>
                     <Tab>💙 Domain Layer</Tab>
                     <Tab>🎯 Application Layer</Tab>
                     <Tab>🎭 Presentation Layer</Tab>
+                    <Tab>📂 Persistance Layer</Tab>
                 </TabList>
 
                 <TabPanels>
@@ -112,6 +111,21 @@ function App() {
                             </Heading>
                         </Box>
                         <PresentationLayer design={design} />
+                    </TabPanel>
+
+                    <TabPanel>
+                        <Box position='relative' padding='10'>
+                            <Divider />
+                            <Heading lineHeight='tall'>
+                                <Highlight
+                                    query={['EFCore']}
+                                    styles={{ px: '2', py: '1', rounded: 'full', bg: 'green.100' }}
+                                >
+                                    📂 Persistance Layer with EFCore
+                                </Highlight>
+                            </Heading>
+                        </Box>
+                        <PersistanceLayer design={design} />
                     </TabPanel>
 
                 </TabPanels>

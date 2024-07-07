@@ -9,8 +9,8 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-function DomainLayer({ design }) {
 
+function PersistanceLayer({ design }) {
     const [queryHandlerId, setQueryHandlerId] = useState('');
 
     useEffect(() => {
@@ -18,17 +18,17 @@ function DomainLayer({ design }) {
         let ast = AstParser.parse(design.json);
 
         // Generate properties
-        let props = ast.filter(x => x.name != 'id').map(node =>
+        let props = ast.map(node =>
             `        public ${node.kind} ${changeCase.pascalCase(node.name)} { get; private set; }`
         ).join('\n');
 
         // Generate constructor body
-        let constructor = ast.filter(x=>x.name != 'id').map(node =>
+        let constructor = ast.map(node =>
             `            ${changeCase.pascalCase(node.name)} = ${node.name};`
         ).join('\n');
 
         // Generate constructor parameters
-        let attrs = ast.filter(x => x.name != 'id').map(node =>
+        let attrs = ast.map(node =>
             `${node.kind} ${node.name}`
         ).join(', ');
 
@@ -53,23 +53,34 @@ ${props}
     return (
         <Tabs>
             <TabList>
-                <Tab>Domain</Tab>
+                <Tab>DB Context</Tab>
+                <Tab>DB Context Interface</Tab>
             </TabList>
 
             <TabPanels>
                 <TabPanel>
                     <Box w='100%' p={4} color='black'>
-                        <Text fontSize='2xl'>{`${changeCase.pascalCase(design.entity)}.cs`}</Text>
+                        <Text fontSize='2xl'>{`AppDBContext.cs`}</Text>
                         <h4 />
                         <SyntaxHighlighter language="csharp" style={solarizedlight}>
-                            {queryHandlerId}
+                            {`public DbSet<${changeCase.pascalCase(pluralize.singular(design.entity))}> ${changeCase.pascalCase(pluralize(design.entity))} { get; set; }`}
                         </SyntaxHighlighter>
                     </Box>
+                </TabPanel>
 
+                <TabPanel>
+                    <Box w='100%' p={4} color='black'>
+                        <Text fontSize='2xl'>{`IAppDBContext.cs`}</Text>
+                        <h4 />
+                        <SyntaxHighlighter language="csharp" style={solarizedlight}>
+                            {`public DbSet<${changeCase.pascalCase(pluralize.singular(design.entity))}> ${changeCase.pascalCase(pluralize(design.entity))} { get; set; }`}
+                        </SyntaxHighlighter>
+                    </Box>
                 </TabPanel>
             </TabPanels>
+
         </Tabs>
     );
 }
 
-export default DomainLayer;
+export default PersistanceLayer;

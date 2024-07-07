@@ -5,17 +5,17 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 
-function ModelViewer({ name, json, isRecord }) {
+function ModelViewer({ name, json, isRecord, excludeId, isCqrs }) {
 
     const [editorContent, setEditorContent] = useState('');
 
     useEffect(() => {
         if (isRecord) {
-            let model = ModelMaker.makeRecord(name, json);
+            let model = ModelMaker.makeRecord(name, json, excludeId, isCqrs);
             setEditorContent(model);
         }
         else {
-            let model = ModelMaker.makeClass(name, json);
+            let model = ModelMaker.makeClass(name, json, excludeId, isCqrs);
             setEditorContent(model);
         }
     }, [name, json, isRecord]);
