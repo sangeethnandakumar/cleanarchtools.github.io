@@ -8,10 +8,13 @@ import ModelViewer from "./ModelViewer";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
+import { Button, Stack } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react'
 
 function PersistanceLayer({ design }) {
     const [queryHandlerId, setQueryHandlerId] = useState('');
+
+    const toast = useToast();
 
     useEffect(() => {
 
@@ -61,7 +64,19 @@ ${props}
                 <TabPanel>
                     <Box w='100%' p={4} color='black'>
                         <Text fontSize='2xl'>{`AppDBContext.cs`}</Text>
-                        <h4 />
+                        <Stack direction='row' spacing={0} align='center' m={6}>
+                            <Button colorScheme='teal' variant='outline' onClick={() => {
+                                navigator.clipboard.writeText(`public DbSet<${changeCase.pascalCase(pluralize.singular(design.entity))}> ${changeCase.pascalCase(pluralize(design.entity))} { get; set; }`);
+                                toast({
+                                    title: 'Code Copied',
+                                    status: 'success',
+                                    duration: 500,
+                                    isClosable: false,
+                                })
+                            }}>
+                                📑 Copy To Clipboard
+                            </Button>
+                        </Stack>
                         <SyntaxHighlighter language="csharp" style={solarizedlight}>
                             {`public DbSet<${changeCase.pascalCase(pluralize.singular(design.entity))}> ${changeCase.pascalCase(pluralize(design.entity))} { get; set; }`}
                         </SyntaxHighlighter>
@@ -71,7 +86,19 @@ ${props}
                 <TabPanel>
                     <Box w='100%' p={4} color='black'>
                         <Text fontSize='2xl'>{`IAppDBContext.cs`}</Text>
-                        <h4 />
+                        <Stack direction='row' spacing={0} align='center' m={6}>
+                            <Button colorScheme='teal' variant='outline' onClick={() => {
+                                navigator.clipboard.writeText(`public DbSet<${changeCase.pascalCase(pluralize.singular(design.entity))}> ${changeCase.pascalCase(pluralize(design.entity))} { get; set; }`);
+                                toast({
+                                    title: 'Code Copied',
+                                    status: 'success',
+                                    duration: 500,
+                                    isClosable: false,
+                                })
+                            }}>
+                                📑 Copy To Clipboard
+                            </Button>
+                        </Stack>
                         <SyntaxHighlighter language="csharp" style={solarizedlight}>
                             {`public DbSet<${changeCase.pascalCase(pluralize.singular(design.entity))}> ${changeCase.pascalCase(pluralize(design.entity))} { get; set; }`}
                         </SyntaxHighlighter>

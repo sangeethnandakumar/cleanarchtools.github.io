@@ -8,9 +8,13 @@ import AstParser from "./AstParser";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
+import { Button, Stack } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react'
 function PresentationLayer({ design }) {
     const [editorContent, setEditorContent] = useState('');
+
+
+    const toast = useToast();
 
     useEffect(() => {
 
@@ -77,7 +81,19 @@ ${maps}
                     <TabPanel>
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`${changeCase.pascalCase(pluralize(design.entity))}Module.cs`}</Text>
-                            <h4 />
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(editorContent);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {editorContent}
                             </SyntaxHighlighter>

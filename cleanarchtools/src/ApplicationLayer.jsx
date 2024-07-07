@@ -8,7 +8,8 @@ import ModelViewer from "./ModelViewer";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
+import { Button, Stack } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react'
 function ApplicationLayer({ design }) {
     
     const [queryHandlerId, setQueryHandlerId] = useState('');
@@ -18,6 +19,9 @@ function ApplicationLayer({ design }) {
     const [singleQueryValidator, setSingleQueryValidator] = useState('');
     const [allQueryValidator, setAllQueryValidator] = useState('');
     const [mappingProfile, setMappingProfile] = useState('');
+
+
+    const toast = useToast();
 
     useEffect(() => {
 
@@ -222,6 +226,7 @@ ${members}
                     <TabPanel>
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`${changeCase.pascalCase(pluralize.singular(design.entity))}Dto.cs`}</Text>
+
                             <ModelViewer
                                 name={`${changeCase.pascalCase(pluralize.singular(design.entity))}Dto`}
                                 json={design.json}
@@ -232,6 +237,19 @@ ${members}
                     <TabPanel>
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`MappingProfile.cs`}</Text>
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(mappingProfile);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {mappingProfile}
                             </SyntaxHighlighter>
@@ -243,6 +261,19 @@ ${members}
                     <TabPanel>
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query.cs`}</Text>
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(`public sealed record Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query(string Id) : IRequest<Result<${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>>;`);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {`public sealed record Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query(string Id) : IRequest<Result<${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>>;`}
                             </SyntaxHighlighter>
@@ -250,6 +281,19 @@ ${members}
 
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Get${changeCase.pascalCase(pluralize(design.entity))}Query.cs`}</Text>
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(`public sealed record Get${changeCase.pascalCase(pluralize(design.entity))}Query() : IRequest<Result<IEnumerable<${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>>>;`);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {`public sealed record Get${changeCase.pascalCase(pluralize(design.entity))}Query() : IRequest<Result<IEnumerable<${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>>>;`}
                             </SyntaxHighlighter>
@@ -272,6 +316,19 @@ ${members}
                     <TabPanel>
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryValidator.cs`}</Text>
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(singleQueryValidator);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {singleQueryValidator}
                             </SyntaxHighlighter>
@@ -279,6 +336,19 @@ ${members}
 
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Get${changeCase.pascalCase(pluralize(design.entity))}QueryValidator.cs`}</Text>
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(allQueryValidator);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {allQueryValidator}
                             </SyntaxHighlighter>
@@ -286,6 +356,19 @@ ${members}
 
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Create${changeCase.pascalCase(pluralize.singular(design.entity))}CommandValidator.cs`}</Text>
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(validator);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {validator}
                             </SyntaxHighlighter>
@@ -296,7 +379,19 @@ ${members}
                     <TabPanel>
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryHandler.cs`}</Text>
-                            <h4 />
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(queryHandlerId);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {queryHandlerId}
                             </SyntaxHighlighter>
@@ -304,7 +399,19 @@ ${members}
 
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Get${changeCase.pascalCase(pluralize(design.entity))}QueryHandler.cs`}</Text>
-                            <h4 />
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(queryHandlerAll);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {queryHandlerAll}
                             </SyntaxHighlighter>
@@ -314,7 +421,19 @@ ${members}
                     <TabPanel>
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Create${changeCase.pascalCase(pluralize.singular(design.entity))}CommandHandler.cs`}</Text>
-                            <h4 />
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(commandCreateHandler);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {commandCreateHandler}
                             </SyntaxHighlighter>
