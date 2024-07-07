@@ -30,7 +30,7 @@ function App() {
 
             <Tabs>
                 <TabList>
-                    <Tab>⚒️ Design</Tab>
+                    <Tab>⚒️ Design MOdel</Tab>
                     <Tab>💙 Domain Layer</Tab>
                     <Tab>🎯 Application Layer</Tab>
                     <Tab>🎭 Presentation Layer</Tab>
