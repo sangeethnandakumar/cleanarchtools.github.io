@@ -125,6 +125,7 @@ ${maps}
                                 json={design.json}
                                 isRecord={true}
                                 excludeId={true}
+                                hasStringGuids={true}
                             />
 
                         </Box>

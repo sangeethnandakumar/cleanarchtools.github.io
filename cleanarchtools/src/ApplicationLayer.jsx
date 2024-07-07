@@ -171,7 +171,7 @@ ${maps}
                 case 'int':
                 case 'float':
                 case 'decimal':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
                 case 'DateTime':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(date => DateTime.TryParseExact(date.ToString(), "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
                 case 'Guid':
