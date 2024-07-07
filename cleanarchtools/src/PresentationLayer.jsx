@@ -41,7 +41,7 @@ function PresentationLayer({ design }) {
         //GET
             app.MapGet("/", async (IMediator mediator) =>
             {
-                var result = await mediator.Send(new GetTracksQuery());
+                var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize(design.entity))}Query());
                 return result.Match(
                     s => Results.Ok(s),
                     f => f switch
@@ -56,7 +56,7 @@ function PresentationLayer({ design }) {
             //GET
             app.MapGet("/{id}", async ([FromRoute] string id, IMediator mediator) =>
             {
-                var result = await mediator.Send(new GetTrackQuery(id));
+                var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query(id));
                 return result.Match(
                     s => Results.Ok(s),
                     f => f switch

@@ -21,8 +21,12 @@ function DomainLayer({ design }) {
         let ast = AstParser.parse(design.json);
 
         // Generate properties
-        let props = ast.filter(x => x.name != 'id').map(node =>
-            `        public ${node.kind} ${changeCase.pascalCase(node.name)} { get; private set; }`
+        let props = ast.filter(x => x.name != 'id').map(node => {
+            if (node.kind == 'Guid') {
+                node.kind = 'Guid?'
+            }
+            return `        public ${node.kind} ${changeCase.pascalCase(node.name)} { get; private set; }`
+        }
         ).join('\n');
 
         // Generate constructor body
@@ -31,8 +35,13 @@ function DomainLayer({ design }) {
         ).join('\n');
 
         // Generate constructor parameters
-        let attrs = ast.filter(x => x.name != 'id').map(node =>
-            `${node.kind} ${node.name}`
+        let attrs = ast.filter(x => x.name != 'id').map(node => {
+
+            if (node.kind == 'Guid') {
+                node.kind = 'Guid?'
+            }
+            return `${node.kind} ${node.name}`
+        }
         ).join(', ');
 
         const queryHandlerCode = `public sealed class ${changeCase.pascalCase(design.entity)} : Entity

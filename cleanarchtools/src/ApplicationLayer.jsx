@@ -36,7 +36,7 @@ function ApplicationLayer({ design }) {
                     return `              DateTime.ParseExact(request.${changeCase.pascalCase(node.name)}, "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None)`;
                 }
                 if (node.kind == 'Guid') {
-                    return `              Guid.Parse(request.${changeCase.pascalCase(node.name)})`;
+                    return `              request.${changeCase.pascalCase(node.name)} != null ? Guid.Parse(request.${changeCase.pascalCase(node.name)}) : null`;
                 }
                 return `              request.${changeCase.pascalCase(node.name)}`;
     })
@@ -367,7 +367,9 @@ ${members}
                             <ModelViewer
                                 name={`${changeCase.pascalCase(pluralize.singular(design.entity))}Dto`}
                                 json={design.json}
-                                isRecord={true}/>
+                                isRecord={true}
+                                hasStringGuids={true}
+                            />
                         </Box>
                     </TabPanel>
 
