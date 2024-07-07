@@ -60,7 +60,7 @@ function ApplicationLayer({ design }) {
         if (!validationResult.IsValid)
         {
             logger.LogInformation("Validation errors: {@ValidationErrors}", validationResult.ToStandardDictionary());
-            return new Result<${changeCase.pascalCase(design.entity)}>(new ValidationException(validationResult.Errors));
+            return new Result<${changeCase.pascalCase(design.entity)}Dto>(new ValidationException(validationResult.Errors));
         }
 
 
@@ -98,7 +98,7 @@ function ApplicationLayer({ design }) {
         if (!validationResult.IsValid)
         {
             logger.LogInformation("Validation errors: {@ValidationErrors}", validationResult.ToStandardDictionary());
-            return new Result<IEnumerable<${changeCase.pascalCase(design.entity)}>>(new ValidationException(validationResult.Errors));
+            return new Result<IEnumerable<${changeCase.pascalCase(design.entity)}Dto>>(new ValidationException(validationResult.Errors));
         }
 
 
