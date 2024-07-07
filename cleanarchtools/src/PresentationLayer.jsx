@@ -24,6 +24,11 @@ function PresentationLayer({ design }) {
             return `                    request.${changeCase.pascalCase(node.name)}`;
         }).join(',\n');
 
+        let mapsWithId = ``;
+        mapsWithId = ast.map((node) => {
+            return `                    request.${changeCase.pascalCase(node.name)}`;
+        }).join(',\n');
+
         const content = `public sealed class ${changeCase.pascalCase(pluralize(design.entity))}Module : CarterModule
 {
     public ${changeCase.pascalCase(pluralize(design.entity))}Module() : base("${changeCase.kebabCase(pluralize(design.entity))}")
@@ -67,11 +72,7 @@ function PresentationLayer({ design }) {
             app.MapPost("/", async (Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request request, IMediator mediator) =>
             {
                 var result = await mediator.Send(new Create${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
-                        request.Date,
-                        request.Exp,
-                        request.Inc,
-                        request.Notes,
-                        request.Category
+${maps}
                 ));
 
                 return result.Match(
@@ -88,12 +89,8 @@ function PresentationLayer({ design }) {
             app.MapPut("/{id}", async ([FromRoute] string id, Update${changeCase.pascalCase(pluralize.singular(design.entity))}Request request, IMediator mediator) =>
             {
                 var result = await mediator.Send(new Update${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
-                        id,
-                        request.Date,
-                        request.Exp,
-                        request.Inc,
-                        request.Notes,
-                        request.Category
+                    id,
+${maps}
                 ));
 
                 return result.Match(

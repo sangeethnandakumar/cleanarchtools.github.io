@@ -73,7 +73,7 @@ function ApplicationLayer({ design }) {
         if(queryResult is null)
         {
             logger.LogInformation("No data found for id: {@Id}", request.Id);
-            return new Result<TrackDto>(new DataException($"No data found for id: {request.Id}"));
+            return new Result<${changeCase.pascalCase(pluralize(design.entity))}Dto>(new DataException($"No data found for id: {request.Id}"));
         }
         var result = mapper.Map<${changeCase.pascalCase(design.entity)}Dto>(queryResult);
         
@@ -109,14 +109,8 @@ function ApplicationLayer({ design }) {
             return new Result<IEnumerable<${changeCase.pascalCase(design.entity)}Dto>>(new ValidationException(validationResult.Errors));
         }
 
-
         //Proceed
         var queryResult = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.ToListAsync();
-        if(queryResult is null)
-        {
-            logger.LogInformation("No data found for id: {@Id}", request.Id);
-            return new Result<TrackDto>(new DataException($"No data found for id: {request.Id}"));
-        }
         var result = mapper.Map<IEnumerable<${changeCase.pascalCase(design.entity)}Dto>>(queryResult);
         
         //Complete
@@ -242,7 +236,7 @@ ${maps}
         }
 
         //Delete
-        var result = dbContext.Tracks.Remove(entityToDelete);
+        var result = dbContext.${changeCase.pascalCase(pluralize(design.entity))}.Remove(entityToDelete);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         //Complete
