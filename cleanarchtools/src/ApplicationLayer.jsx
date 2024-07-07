@@ -234,7 +234,8 @@ ${members}
                             <Text fontSize='2xl'>{`MappingProfile.cs`}</Text>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
                                 {mappingProfile}
-                            </SyntaxHighlighter>                        </Box>
+                            </SyntaxHighlighter>
+                        </Box>
                     </TabPanel>
 
                     
