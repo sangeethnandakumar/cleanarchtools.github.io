@@ -15,13 +15,12 @@ function App() {
         namespace: "ExpenceTracker.Presentation",
         entity: "catageory",
         json: `{
-            "id": "b50808cb-0d3b-4159-b313-617e95ac5d8d",
-	        "title": "Turf Cafe",
-	        "text": "My favorite barista and coffees",
-	        "sub": "[CATAGEORY ID]",
-	        "image":"[IMAGE ID]",
-	        "icon":"[ICON ID]"
-        }`
+    "id": "b50808cb-0d3b-4159-b313-617e95ac5d8d",
+	"name": "Sangeeth",
+	"isDeveloper": true
+	"age": 27,
+	"dob": "1996-10-28T11:12:00.000Z",
+}`
     });
 
     return (
@@ -49,10 +48,7 @@ function App() {
                                 </Highlight>
                             </Heading>
                             <Box position='relative' padding='10'>
-                                <FormControl isRequired>
-                                    <FormLabel>Namespace</FormLabel>
-                                    <Input placeholder='Example: ExpenceTracker.Presentation' value={design.namespace} />
-                                </FormControl>
+                               
                                 <FormControl isRequired>
                                     <FormLabel>Entity Name</FormLabel>
                                     <Input
@@ -64,8 +60,8 @@ function App() {
 
                             <Box w='100%' p={4} color='blue'>
                                 <Editor
-                                    theme="vs-dark"
-                                    height="200px"
+                                    theme="vs-light"
+                                    height="25vh"
                                     defaultLanguage="csharp"
                                     defaultValue={design.json}
                                     onChange={(value, event) => setDesign({ ...design, json: value })} />
