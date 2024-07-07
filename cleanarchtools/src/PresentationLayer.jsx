@@ -34,11 +34,9 @@ function PresentationLayer({ design }) {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
         //GET
-        app.MapGet("/", async (IMediator mediator, [FromQuery] string id = null) =>
-        {
-            if(id is not null)
+            app.MapGet("/", async (IMediator mediator) =>
             {
-                var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query(id));
+                var result = await mediator.Send(new GetTracksQuery());
                 return result.Match(
                     s => Results.Ok(s),
                     f => f switch
@@ -46,38 +44,83 @@ function PresentationLayer({ design }) {
                         ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
                         DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
                         _ => Results.UnprocessableEntity(f.Message)
-                });
-            }
-            else
-            {
-                var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize(design.entity))}Query());
-                return result.Match(
-                    s => Results.Ok(s),
-                    f => f switch
-                    {
-                        ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
-                        DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
-                        _ => Results.UnprocessableEntity(f.Message)
-                });
-            }
-        });
-
-        //POST
-        app.MapPost("/", async (Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request request, IMediator mediator) =>
-        {
-            var result = await mediator.Send(new Create${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
-${maps}
-            ));
-
-            return result.Match(
-                    s => Results.Ok(s),
-                    f => f switch
-                    {
-                        ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
-                        DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
-                        _ => Results.UnprocessableEntity(f.Message)
+                    });
             });
-        });
+
+
+            //GET
+            app.MapGet("/{id}", async ([FromRoute] string id, IMediator mediator) =>
+            {
+                var result = await mediator.Send(new GetTrackQuery(id));
+                return result.Match(
+                    s => Results.Ok(s),
+                    f => f switch
+                    {
+                        ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
+                        DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
+                        _ => Results.UnprocessableEntity(f.Message)
+                    });
+            });
+
+
+            //POST
+            app.MapPost("/", async (Create${changeCase.pascalCase(pluralize.singular(design.entity))}Request request, IMediator mediator) =>
+            {
+                var result = await mediator.Send(new Create${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
+                        request.Date,
+                        request.Exp,
+                        request.Inc,
+                        request.Notes,
+                        request.Category
+                ));
+
+                return result.Match(
+                        s => Results.Ok(s),
+                        f => f switch
+                        {
+                            ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
+                            DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
+                            _ => Results.UnprocessableEntity(f.Message)
+                        });
+            });
+
+            //PUT
+            app.MapPut("/{id}", async ([FromRoute] string id, Update${changeCase.pascalCase(pluralize.singular(design.entity))}Request request, IMediator mediator) =>
+            {
+                var result = await mediator.Send(new Update${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
+                        id,
+                        request.Date,
+                        request.Exp,
+                        request.Inc,
+                        request.Notes,
+                        request.Category
+                ));
+
+                return result.Match(
+                        s => Results.Ok(s),
+                        f => f switch
+                        {
+                            ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
+                            DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
+                            _ => Results.UnprocessableEntity(f.Message)
+                        });
+            });
+
+
+            //DELETE
+            app.MapDelete("/{id}", async ([FromRoute] string id, IMediator mediator) =>
+            {
+                var result = await mediator.Send(new Delete${changeCase.pascalCase(pluralize.singular(design.entity))}Command(id));
+
+                return result.Match(
+                        s => Results.Ok(s),
+                        f => f switch
+                        {
+                            ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
+                            DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
+                            _ => Results.UnprocessableEntity(f.Message)
+                        });
+            });
     }
 }`;
 
@@ -125,6 +168,19 @@ ${maps}
                                 json={design.json}
                                 isRecord={true}
                                 excludeId={true}
+                                hasStringGuids={true}
+                            />
+
+                        </Box>
+
+                        <Box w='100%' p={4} color='black'>
+                            <Text fontSize='2xl'>{`Update${changeCase.pascalCase(pluralize.singular(design.entity))}Request.cs`}</Text>
+
+                            <ModelViewer
+                                name={`Update${changeCase.pascalCase(pluralize.singular(design.entity))}Request`}
+                                json={design.json}
+                                isRecord={true}
+                                excludeId={false}
                                 hasStringGuids={true}
                             />
 
