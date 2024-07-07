@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Editor from '@monaco-editor/react';
 import PresentationLayer from './PresentationLayer';
 import ApplicationLayer from './ApplicationLayer';
+import DomainLayer from './DomainLayer';
 import { Highlight, Heading } from '@chakra-ui/react'
 
 import { Divider, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
@@ -50,12 +51,42 @@ function App() {
 
             <Tabs>
                 <TabList>
-                    <Tab>🎭 Presentation Layer</Tab>
+                    <Tab>💙 Domain Layer</Tab>
                     <Tab>🎯 Application Layer</Tab>
-                    <Tab>❤️ Domain Layer</Tab>
+                    <Tab>🎭 Presentation Layer</Tab>
                 </TabList>
 
                 <TabPanels>
+                    <TabPanel>
+                        <Box position='relative' padding='10'>
+                            <Divider />
+                            <Heading lineHeight='tall'>
+                                <Highlight
+                                    query={['Entities', 'ValueObjects', 'Domain Events']}
+                                    styles={{ px: '2', py: '1', rounded: 'full', bg: 'blue.100' }}
+                                >
+                                    💙 Domain Layer With Entities, ValueObjects & Domain Events
+                                </Highlight>
+                            </Heading>
+                        </Box>
+                        <DomainLayer design={design} />
+                    </TabPanel>
+
+                    <TabPanel>
+                        <Box position='relative' padding='10'>
+                            <Divider />
+                            <Heading lineHeight='tall'>
+                                <Highlight
+                                    query={['MediatR', 'EFCore', 'Fluent Validator', 'Result Pattern']}
+                                    styles={{ px: '2', py: '1', rounded: 'full', bg: 'red.100' }}
+                                >
+                                    🎯 Application Layer Using MediatR, EFCore & Fluent Validator With Result Pattern
+                                </Highlight>
+                            </Heading>
+                        </Box>
+                        <ApplicationLayer design={design} />
+                    </TabPanel>
+
                     <TabPanel>
                         <Box position='relative' padding='10'>
                             <Divider />
@@ -71,29 +102,6 @@ function App() {
                         <PresentationLayer design={design} />
                     </TabPanel>
 
-                    <TabPanel>
-                        <Box position='relative' padding='10'>
-                            <Divider />
-                            <Heading lineHeight='tall'>
-                                <Highlight
-                                    query={['MediatR CQRS', 'Fluent Validator', 'Result Pattern']}
-                                    styles={{ px: '2', py: '1', rounded: 'full', bg: 'red.100' }}
-                                >
-                                    🎯 Application Layer Using MediatR CQRS, Fluent Validator With Result Pattern
-                                </Highlight>
-                            </Heading>
-                        </Box>
-                        <ApplicationLayer design={design} />
-                    </TabPanel>
-
-                    <TabPanel>
-                        <Box position='relative' padding='10'>
-                            <Divider />
-                            <AbsoluteCenter bg='white' px='4'>
-                                <Text fontSize='3xl'>❤️Domain Layer</Text>
-                            </AbsoluteCenter>
-                        </Box>
-                    </TabPanel>
                 </TabPanels>
             </Tabs>
         </>

@@ -9,7 +9,6 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-
 function ApplicationLayer({ design }) {
     
     const [queryHandlerId, setQueryHandlerId] = useState('');
@@ -24,40 +23,46 @@ function ApplicationLayer({ design }) {
             maps += `                           request.${changeCase.pascalCase(node.name)},\n`;
         });
 
-        const queryHandlerCode = `public sealed class Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryHandler : IRequestHandler<Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query, Result<${changeCase.pascalCase(design.entity)}>>
+        const queryHandlerCode = `public sealed class Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryHandler : IRequestHandler<Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query, Result<${changeCase.pascalCase(design.entity)}Dto>>
     {
         private readonly ILogger<Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryHandler> logger;
         private readonly IAppDBContext dbContext;
+        private readonly IMapper mapper;
 
-        public Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryHandler(ILogger<Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryHandler> logger, IAppDBContext dbContext)
+        public Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryHandler(ILogger<Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryHandler> logger, IAppDBContext dbContext, IMapper mapper)
         {
             this.logger = logger;
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
-        public async Task<Result<${changeCase.pascalCase(design.entity)}>> Handle(Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query request, CancellationToken cancellationToken)
+        public async Task<Result<${changeCase.pascalCase(design.entity)}Dto>> Handle(Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query request, CancellationToken cancellationToken)
         {
-            var ${design.entity} = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.FirstOrDefaultAsync(x => x.Id == request.Id);
-            return ${design.entity};
+            var queryResult = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.FirstOrDefaultAsync(x => x.Id == request.Id);
+            var result = mapper.Map<${changeCase.pascalCase(design.entity)}Dto>(queryResult);
+            return result;
         }
     }`;
         setQueryHandlerId(queryHandlerCode);
 
-        const queryHandlerCodeAll = `public sealed class Get${changeCase.pascalCase(pluralize(design.entity))}QueryHandler : IRequestHandler<Get${changeCase.pascalCase(pluralize(design.entity))}Query, Result<IEnumerable<${changeCase.pascalCase(design.entity)}>>>
+        const queryHandlerCodeAll = `public sealed class Get${changeCase.pascalCase(pluralize(design.entity))}QueryHandler : IRequestHandler<Get${changeCase.pascalCase(pluralize(design.entity))}Query, Result<IEnumerable<${changeCase.pascalCase(design.entity)}Dto>>>
     {
         private readonly ILogger<Get${changeCase.pascalCase(pluralize(design.entity))}QueryHandler> logger;
         private readonly IAppDBContext dbContext;
+        private readonly IMapper mapper;
 
-        public Get${changeCase.pascalCase(pluralize(design.entity))}QueryHandler(ILogger<Get${changeCase.pascalCase(pluralize(design.entity))}QueryHandler> logger, IAppDBContext dbContext)
+        public Get${changeCase.pascalCase(pluralize(design.entity))}QueryHandler(ILogger<Get${changeCase.pascalCase(pluralize(design.entity))}QueryHandler> logger, IAppDBContext dbContext, IMapper mapper)
         {
             this.logger = logger;
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
-        public async Task<Result<IEnumerable<${changeCase.pascalCase(design.entity)}>>> Handle(Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<${changeCase.pascalCase(design.entity)}Dto>>> Handle(Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query request, CancellationToken cancellationToken)
         {
-            var ${pluralize(design.entity)} = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.ToListAsync();
-            return ${pluralize(design.entity)};
+            var queryResult = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.ToListAsync();
+            var result = mapper.Map<IEnumerable<${changeCase.pascalCase(design.entity)}Dto>>(queryResult);
+            return result;
         }
     }`;
         setQueryHandlerAll(queryHandlerCodeAll);
@@ -93,6 +98,8 @@ ${maps}
 
             <Tabs>
                 <TabList>
+                    <Tab>DTOs</Tab>
+                    <Tab>Mapping Profile</Tab>
                     <Tab>CQRS Queries</Tab>
                     <Tab>CQRS Commands</Tab>
                     <Tab>CQRS Query Handlers</Tab>
@@ -100,6 +107,16 @@ ${maps}
                 </TabList>
 
                 <TabPanels>
+                    <TabPanel>
+                        <Box w='100%' p={4} color='black'>
+                            <Text fontSize='2xl'>{`${changeCase.pascalCase(pluralize.singular(design.entity))}Dto.cs`}</Text>
+                            <ModelViewer
+                                name={`${changeCase.pascalCase(pluralize.singular(design.entity))}Dto`}
+                                json={design.json}
+                                isRecord={true} />
+                        </Box>
+                    </TabPanel>
+
                     <TabPanel>
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query.cs`}</Text>
