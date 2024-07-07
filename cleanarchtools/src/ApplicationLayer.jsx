@@ -66,6 +66,11 @@ function ApplicationLayer({ design }) {
 
         //Proceed
         var queryResult = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.FirstOrDefaultAsync(x => x.Id == Guid.Parse(request.Id));
+        if(queryResult is null)
+        {
+            logger.LogInformation("No data found for id: {@Id}", request.Id);
+            return new Result<TrackDto>(new DataException($"No data found for id: {request.Id}"));
+        }
         var result = mapper.Map<${changeCase.pascalCase(design.entity)}Dto>(queryResult);
         
         //Complete
@@ -104,6 +109,11 @@ function ApplicationLayer({ design }) {
 
         //Proceed
         var queryResult = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.ToListAsync();
+        if(queryResult is null)
+        {
+            logger.LogInformation("No data found for id: {@Id}", request.Id);
+            return new Result<TrackDto>(new DataException($"No data found for id: {request.Id}"));
+        }
         var result = mapper.Map<IEnumerable<${changeCase.pascalCase(design.entity)}Dto>>(queryResult);
         
         //Complete
@@ -158,7 +168,7 @@ ${maps}
                 case 'int':
                 case 'float':
                 case 'decimal':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                .NotEmpty().WithMessage("Is required.").GreaterThan(0).WithMessage("Should be greater than 0.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                .NotEmpty().WithMessage("Is required.")\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
                 case 'DateTime':
                     return `        RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(date => DateTime.TryParseExact(date.ToString(), "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
                 case 'Guid':
@@ -230,7 +240,7 @@ ${members}
                             <ModelViewer
                                 name={`${changeCase.pascalCase(pluralize.singular(design.entity))}Dto`}
                                 json={design.json}
-                                isRecord={true} />
+                                isRecord={true}/>
                         </Box>
                     </TabPanel>
 

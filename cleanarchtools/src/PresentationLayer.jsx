@@ -34,17 +34,31 @@ function PresentationLayer({ design }) {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
         //GET
-        app.MapGet("/", async ([FromQuery] string id, IMediator mediator) =>
+        app.MapGet("/", async (IMediator mediator, [FromQuery] string id = null) =>
         {
             if(id is not null)
             {
                 var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize.singular(design.entity))}Query(id));
-                return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
+                return result.Match(
+                    s => Results.Ok(s),
+                    f => f switch
+                    {
+                        ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
+                        DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
+                        _ => Results.UnprocessableEntity(f.Message)
+                });
             }
             else
             {
                 var result = await mediator.Send(new Get${changeCase.pascalCase(pluralize(design.entity))}Query());
-                return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
+                return result.Match(
+                    s => Results.Ok(s),
+                    f => f switch
+                    {
+                        ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
+                        DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
+                        _ => Results.UnprocessableEntity(f.Message)
+                });
             }
         });
 
@@ -57,10 +71,12 @@ ${maps}
 
             return result.Match(
                     s => Results.Ok(s),
-                    f => f is ValidationException validationException
-                         ? Results.BadRequest(validationException.ToStandardResponse())
-                         : Results.BadRequest(f.Message)
-            );
+                    f => f switch
+                    {
+                        ValidationException validationException => Results.BadRequest(validationException.ToStandardResponse()),
+                        DataException anotherException => Results.NotFound(anotherException.ToStandardResponse()),
+                        _ => Results.UnprocessableEntity(f.Message)
+            });
         });
     }
 }`;
