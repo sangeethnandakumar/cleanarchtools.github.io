@@ -50,7 +50,13 @@ function PresentationLayer({ design }) {
             var result = await mediator.Send(new Create${changeCase.pascalCase(pluralize.singular(design.entity))}Command(
 ${maps}
             ));
-            return result.Match(s => Results.Ok(s), f => Results.BadRequest(f.Message));
+
+            return result.Match(
+                    s => Results.Ok(s),
+                    f => f is ValidationException validationException
+                         ? Results.BadRequest(validationException.ToStandardResponse())
+                         : Results.BadRequest(f.Message)
+            );
         });
     }
 }`;

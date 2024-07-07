@@ -52,15 +52,13 @@ function ApplicationLayer({ design }) {
         //Validate
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
+
         if (!validationResult.IsValid)
         {
-            // Handle validation failures
-            foreach (var error in validationResult.Errors)
-            {
-                logger.LogError(error.ErrorMessage);
-            }
-            return new Result<${changeCase.pascalCase(design.entity)}Dto>(new ValidationException(validationResult.Errors));
+            logger.LogInformation("Validation errors: {@ValidationErrors}", validationResult.ToStandardDictionary());
+            return new Result<${changeCase.pascalCase(design.entity)}>(new ValidationException(validationResult.Errors));
         }
+
 
         //Proceed
         var queryResult = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.FirstOrDefaultAsync(x => x.Id == Guid.Parse(request.Id));
@@ -95,13 +93,10 @@ function ApplicationLayer({ design }) {
 
         if (!validationResult.IsValid)
         {
-            // Handle validation failures
-            foreach (var error in validationResult.Errors)
-            {
-                logger.LogError(error.ErrorMessage);
-            }
-            return new Result<IEnumerable<${changeCase.pascalCase(design.entity)}Dto>>(new ValidationException(validationResult.Errors));
+            logger.LogInformation("Validation errors: {@ValidationErrors}", validationResult.ToStandardDictionary());
+            return new Result<IEnumerable<${changeCase.pascalCase(design.entity)}>>(new ValidationException(validationResult.Errors));
         }
+
 
         //Proceed
         var queryResult = await dbContext.${changeCase.pascalCase(pluralize(design.entity))}.ToListAsync();
@@ -133,11 +128,7 @@ function ApplicationLayer({ design }) {
 
         if (!validationResult.IsValid)
         {
-            // Handle validation failures
-            foreach (var error in validationResult.Errors)
-            {
-                logger.LogError(error.ErrorMessage);
-            }
+            logger.LogInformation("Validation errors: {@ValidationErrors}", validationResult.ToStandardDictionary());
             return new Result<Guid>(new ValidationException(validationResult.Errors));
         }
 
