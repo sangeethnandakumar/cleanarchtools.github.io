@@ -8,6 +8,9 @@ export const ModelMaker = (function () {
 
             let props = ``;
             ast.forEach((node) => {
+                if (node.kind == 'DateTime') {
+                    node.kind = 'string'
+                }
                 props += `      public ${node.kind} ${changeCase.pascalCase(node.name) } {get; set;}\n`;
             });
 
@@ -22,6 +25,9 @@ ${props}}
 
             let props = ``;
             ast.forEach((node) => {
+                if (node.kind == 'DateTime') {
+                    node.kind = 'string'
+                }
                 props += `      ${node.kind} ${changeCase.pascalCase(node.name) },\n`;
             });
 

@@ -17,6 +17,7 @@ function ApplicationLayer({ design }) {
     const [validator, setValidator] = useState('');
     const [singleQueryValidator, setSingleQueryValidator] = useState('');
     const [allQueryValidator, setAllQueryValidator] = useState('');
+    const [mappingProfile, setMappingProfile] = useState('');
 
     useEffect(() => {
 
@@ -158,11 +159,9 @@ ${maps}
                 case 'decimal':
                     return `            RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                   .NotEmpty().WithMessage("Is required.").GreaterThan(0).WithMessage("Should be greater than 0.");`;
                 case 'DateTime':
-                    return `            RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                   .NotEmpty().WithMessage("Is required.").Must(date => date !== null && date !== undefined && !isNaN(date.getTime())).WithMessage("Must be a valid date.");`;
+                    return `            RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                   .NotEmpty().WithMessage("Is required.")\n                   .Must(date => DateTime.TryParseExact(date.ToString(), "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))\n                   .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
                 case 'Guid':
-                    return `            RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                   .NotEmpty().WithMessage("Is required.")\n                   .Must(guid => guid !== null && guid !== undefined && guid.match(/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i)).WithMessage("Must be a valid GUID.");`;
-                default:
-                    return `// Handle unsupported kind '${node.kind}' for '${node.name}'.`;
+                    return `            RuleFor(x => x.${changeCase.pascalCase(pluralize.singular(node.name))})\n                   .NotEmpty().WithMessage("Is required.")\n                   .Must(id => Guid.TryParse(id, out _)).WithMessage("Must be a valid GUID.");`;
             }
         }).join('\n');
 
@@ -182,7 +181,7 @@ ${rules}
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Is required.")
-                .Must(guid => guid !== null && guid !== undefined && guid.match(/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i)).WithMessage("Must be a valid GUID.");
+                .Must(id => Guid.TryParse(id, out _)).WithMessage("Must be a valid GUID.");
         }
     }`;
         setSingleQueryValidator(singleValidator);
@@ -195,6 +194,16 @@ ${rules}
     }`;
         setAllQueryValidator(allValidator);
 
+        let members = ast.filter(x=>x.kind == 'DateTime').map(node =>
+            `       .ForMember(dest => dest.${changeCase.pascalCase(node.name)}, opt => opt.MapFrom(src => src.${changeCase.pascalCase(node.name)}.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")))`
+        ).join('\n');
+        members += ";"
+
+        const mapProfile = `//${changeCase.pascalCase(pluralize.singular(design.entity))} → ${changeCase.pascalCase(pluralize.singular(design.entity))}Dto
+CreateMap<${changeCase.pascalCase(pluralize.singular(design.entity))}, ${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>()
+${members}
+`;
+        setMappingProfile(mapProfile);
 
     }, [design.entity, design.json]);
 
@@ -227,7 +236,7 @@ ${rules}
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`MappingProfile.cs`}</Text>
                             <SyntaxHighlighter language="csharp" style={solarizedlight}>
-                                {`//${changeCase.pascalCase(pluralize.singular(design.entity))} → ${changeCase.pascalCase(pluralize.singular(design.entity))}Dto\nCreateMap<${changeCase.pascalCase(pluralize.singular(design.entity))}, ${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>();`}
+                                {mappingProfile}
                             </SyntaxHighlighter>                        </Box>
                     </TabPanel>
 
