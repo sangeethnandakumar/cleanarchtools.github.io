@@ -17,9 +17,9 @@ function App() {
         json: `{
     "id": "b50808cb-0d3b-4159-b313-617e95ac5d8d",
 	"name": "Sangeeth",
-	"isDeveloper": true
+	"isDeveloper": true,
 	"age": 27,
-	"dob": "1996-10-28T11:12:00.000Z",
+	"dob": "1996-10-28T11:12:00.000Z"
 }`
     });
 
