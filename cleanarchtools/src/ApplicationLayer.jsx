@@ -33,7 +33,7 @@ function ApplicationLayer({ design }) {
         let maps = ast.filter(x => x.name != 'id')
             .map(node => {
                 if (node.kind == 'DateTime') {
-                    return `              DateTime.ParseExact(request.${changeCase.pascalCase(node.name)}, "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None)`;
+                    return `              DateTime.ParseExact(request.${changeCase.pascalCase(node.name)}, ValidatorConstants.DATE_FORMAT, CultureInfo.InvariantCulture, DateTimeStyles.None)`;
                 }
                 if (node.kind == 'Guid') {
                     return `              request.${changeCase.pascalCase(node.name)} != null ? Guid.Parse(request.${changeCase.pascalCase(node.name)}) : null`;
@@ -257,7 +257,7 @@ ${maps}
                 case 'decimal':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
                 case 'DateTime':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(BeAValidDate())\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(BeAValidDate())\n                .WithMessage("Must be a valid date in " + ValidatorConstants.DATE_FORMAT_NAME + " (" + ValidatorConstants.DATE_FORMAT + ") format.");`;
                 case 'Guid':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(id => Guid.TryParse(id, out _)).WithMessage("Must be a valid GUID.");`;
             }
@@ -274,7 +274,7 @@ ${maps}
                 case 'decimal':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
                 case 'DateTime':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(BeAValidDate())\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(BeAValidDate())\n                .WithMessage("Must be a valid date in " + ValidatorConstants.DATE_FORMAT_NAME + " (" + ValidatorConstants.DATE_FORMAT + ") format.");`;
                 case 'Guid':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(id => Guid.TryParse(id, out _)).WithMessage("Must be a valid GUID.");`;
             }
@@ -291,7 +291,7 @@ ${rules}
     {
         return date => DateTime.TryParseExact(
             date,
-            "yyyy-MM-ddTHH:mm:ss.fffZ",
+            ValidatorConstants.DATE_FORMAT,
             CultureInfo.InvariantCulture,
             DateTimeStyles.None,
             out _);
@@ -311,7 +311,7 @@ ${updateRules}
     {
         return date => DateTime.TryParseExact(
             date,
-            "yyyy-MM-ddTHH:mm:ss.fffZ",
+            ValidatorConstants.DATE_FORMAT,
             CultureInfo.InvariantCulture,
             DateTimeStyles.None,
             out _);
@@ -352,7 +352,7 @@ ${updateRules}
         setAllQueryValidator(allValidator);
 
         let members = ast.filter(x=>x.kind == 'DateTime').map(node =>
-            `       .ForMember(dest => dest.${changeCase.pascalCase(node.name)}, opt => opt.MapFrom(src => src.${changeCase.pascalCase(node.name)}.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")))`
+            `       .ForMember(dest => dest.${changeCase.pascalCase(node.name)}, opt => opt.MapFrom(src => src.${changeCase.pascalCase(node.name)}.ToString(ValidatorConstants.DATE_FORMAT)))`
         ).join('\n');
         members += ";"
 
@@ -507,6 +507,36 @@ ${members}
                     </TabPanel>
 
                     <TabPanel>
+                        <Box w='100%' p={4} color='black'>
+                            <Text fontSize='2xl'>{`ValidatorConstants.cs`}</Text>
+                            <Stack direction='row' spacing={0} align='center' m={6}>
+                                <Button colorScheme='teal' variant='outline' onClick={() => {
+                                    navigator.clipboard.writeText(`public static class ValidatorConstants
+{
+    // Date Formats
+    public const string DATE_FORMAT_NAME = "ISO 8601 UTC";
+    public const string DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss.fffZ";
+}`);
+                                    toast({
+                                        title: 'Code Copied',
+                                        status: 'success',
+                                        duration: 500,
+                                        isClosable: false,
+                                    })
+                                }}>
+                                    📑 Copy To Clipboard
+                                </Button>
+                            </Stack>
+                            <SyntaxHighlighter language="csharp" style={solarizedlight}>
+                                {`public static class ValidatorConstants
+{
+    // Date Formats
+    public const string DATE_FORMAT_NAME = "ISO 8601 UTC";
+    public const string DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss.fffZ";
+}`}
+                            </SyntaxHighlighter>
+                        </Box>
+
                         <Box w='100%' p={4} color='black'>
                             <Text fontSize='2xl'>{`Get${changeCase.pascalCase(pluralize.singular(design.entity))}QueryValidator.cs`}</Text>
                             <Stack direction='row' spacing={0} align='center' m={6}>
