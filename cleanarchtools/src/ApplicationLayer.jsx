@@ -358,9 +358,7 @@ ${updateRules}
 
         const mapProfile = `//${changeCase.pascalCase(pluralize.singular(design.entity))}
 CreateMap<Update${changeCase.pascalCase(pluralize.singular(design.entity))}Command, ${changeCase.pascalCase(pluralize.singular(design.entity))}>();
-CreateMap<${changeCase.pascalCase(pluralize.singular(design.entity))}, ${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>()
-${members}
-`;
+CreateMap<${changeCase.pascalCase(pluralize.singular(design.entity))}, ${changeCase.pascalCase(pluralize.singular(design.entity))}Dto>();`;
         setMappingProfile(mapProfile);
 
     }, [design.entity, design.json]);
