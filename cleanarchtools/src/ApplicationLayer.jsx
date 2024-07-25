@@ -257,7 +257,7 @@ ${maps}
                 case 'decimal':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
                 case 'DateTime':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(date => DateTime.TryParseExact(date.ToString(), "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(BeAValidDate())\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
                 case 'Guid':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(id => Guid.TryParse(id, out _)).WithMessage("Must be a valid GUID.");`;
             }
@@ -274,7 +274,7 @@ ${maps}
                 case 'decimal':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
                 case 'DateTime':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(date => DateTime.TryParseExact(date.ToString(), "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(BeAValidDate())\n                .WithMessage("Must be a valid date in ISO 8601 (yyyy-MM-ddTHH:mm:ss.fffZ) UTC format.");`;
                 case 'Guid':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(id => Guid.TryParse(id, out _)).WithMessage("Must be a valid GUID.");`;
             }
@@ -286,6 +286,16 @@ ${maps}
     {
 ${rules}
     }
+        ${rules.includes(`.Must(BeAValidDate())`) ? `
+    private static Func<string, bool> BeAValidDate()
+    {
+        return date => DateTime.TryParseExact(
+            date,
+            "yyyy-MM-ddTHH:mm:ss.fffZ",
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.None,
+            out _);
+    }` : ``}
 }`;
         setValidator(validatorCode);
 
@@ -296,6 +306,16 @@ ${rules}
     {
 ${updateRules}
     }
+            ${updateRules.includes(`.Must(BeAValidDate())`) ? `
+    private static Func<string, bool> BeAValidDate()
+    {
+        return date => DateTime.TryParseExact(
+            date,
+            "yyyy-MM-ddTHH:mm:ss.fffZ",
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.None,
+            out _);
+    }` : ``}
 }`;
         setUpdateQueryValidator(updateValidatorCode);
 
