@@ -255,7 +255,7 @@ ${maps}
                 case 'int':
                 case 'float':
                 case 'decimal':
-                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .InclusiveBetween(0, 1000).WithMessage("Should be between 0-1000.");`;
+                    return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .InclusiveBetween(0, 1000000).WithMessage("Should be between 0-1000000.");`;
                 case 'DateTime':
                     return `        RuleFor(x => x.${changeCase.pascalCase(node.name)})\n                .NotEmpty().WithMessage("Is required.")\n                .Must(BeAValidDate())\n                .WithMessage("Must be a valid date in " + ValidatorConstants.DATE_FORMAT_NAME + " (" + ValidatorConstants.DATE_FORMAT + ") format.");`;
                 case 'Guid':
